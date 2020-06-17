@@ -72,12 +72,8 @@ const Auth = ({ token, onLogin, onLogout }) => {
     });
   };
 
-  const handleLogoutPress = () => {
-    SecureStore.deleteItemAsync(ID_TOKEN_KEY).then(onLogout);
-  };
-
   return token ? (
-    <Button title="Logout" onPress={handleLogoutPress}></Button>
+    <Button title="Logout" onPress={onLogout}></Button>
   ) : (
     <Button title="Loggin" onPress={handleLoginPress} />
   );

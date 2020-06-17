@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import PropTypes from "prop-types";
 import { GRAPHQL_ENDPOINT } from "../config";
-import { insertUsers } from "../data/mutations";
+import { INSERT_USERS } from "../data/mutations";
 
-import { TodoList } from "./index";
+import TodoList from "./TodoList";
+import AddTodo from "./AddTodo";
 
 const Main = ({ token, user }) => {
   const [client, setClient] = useState(null);
@@ -23,7 +24,7 @@ const Main = ({ token, user }) => {
 
     if (isNewUser) {
       client.mutate({
-        mutation: insertUsers,
+        mutation: INSERT_USERS,
         variables: { id, name },
       });
     }
@@ -32,16 +33,13 @@ const Main = ({ token, user }) => {
   }, []);
 
   if (!client) {
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <ActivityIndicator size="large" color="" />;
   }
 
   return (
     <ApolloProvider client={client}>
       <View>
+        <AddTodo />
         <TodoList />
       </View>
     </ApolloProvider>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { ID_TOKEN_KEY } from "./config";
 
@@ -21,19 +21,27 @@ export default function App() {
         if (exp > Math.floor(new Date().getTime() / 1000)) {
           setToken(token);
           setUser({ id, name, isNewUser });
+        } else {
+          handleLogout();
         }
       }
     });
   };
 
+  const handleLogout = () => {
+    SecureStore.deleteItemAsync(ID_TOKEN_KEY);
+    setToken(null);
+  };
+
   return (
     <View style={styles.container}>
-      {token && user && <Main token={token} user={user} />}
-      <Auth
-        token={token}
-        onLogin={handleLogin}
-        onLogout={() => setToken(null)}
-      />
+      <KeyboardAvoidingView
+        style={{ flex: 1, padding: 100 }}
+        behavior={"heigth"}
+      >
+        {token && user && <Main token={token} user={user} />}
+        <Auth token={token} onLogin={handleLogin} onLogout={handleLogout} />
+      </KeyboardAvoidingView>
     </View>
   );
 }

@@ -1,19 +1,31 @@
 import React from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useQuery } from "@apollo/react-hooks";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import TodoItem from "./TodoItem";
+import { GET_TODOS } from "../data/queries";
 
 const TodoList = () => {
+  const { loading, error, data } = useQuery(GET_TODOS);
+
+  if (error) return <Text>`Error! ${error.message}`</Text>;
+
   return (
     <View style={Styles.container}>
-      <FlatList
-        data={[
-          { id: 1, text: "React native" },
-          { id: 2, text: "React Expo" },
-          { id: 3, text: "React CLI" },
-        ]}
-        renderItem={({ item }) => <TodoItem item={item} />}
-        keyExtractor={(item) => item.id.toString()}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="" />
+      ) : (
+        <FlatList
+          data={data.todo}
+          renderItem={({ item }) => <TodoItem item={item} />}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      )}
     </View>
   );
 };
@@ -21,6 +33,7 @@ const TodoList = () => {
 const Styles = StyleSheet.create({
   container: {
     height: 500,
+    width: 300,
   },
 });
 
